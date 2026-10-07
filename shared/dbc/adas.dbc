@@ -1,0 +1,73 @@
+VERSION "0.1"
+
+NS_ :
+    NS_DESC_
+    CM_
+    BA_DEF_
+    BA_
+    VAL_
+    CAT_DEF_
+    CAT_
+    FILTER
+    BA_DEF_DEF_
+    EV_DATA_
+    ENVVAR_DATA_
+    SGTYPE_
+    SGTYPE_VAL_
+    BA_DEF_SGTYPE_
+    BA_SGTYPE_
+    SIG_TYPE_REF_
+    VAL_TABLE_
+    SIG_GROUP_
+    SIG_VALTYPE_
+    SIGTYPE_VALTYPE_
+    BO_TX_BU_
+    BA_DEF_REL_
+    BA_REL_
+    BA_DEF_DEF_REL_
+    BU_SG_REL_
+    BU_EV_REL_
+    BU_BO_REL_
+    SG_MUL_VAL_
+
+BS_:
+
+BU_: Perception Décision Dashboard
+
+BO_ 256 PERC_OBJECT: 8 Perception
+ SG_ obj_id : 0|8@1+ (1,0) [0|255] "" Décision,Dashboard
+ SG_ dist_m : 8|16@1+ (0.01,0) [0|655.35] "m" Décision,Dashboard
+ SG_ rel_speed_mps : 24|16@1+ (0.01,-100) [-100|555.35] "m/s" Décision,Dashboard
+ SG_ ttc_s : 40|16@1+ (0.01,0) [0|655.35] "s" Décision,Dashboard
+ SG_ valid : 56|1@1+ (1,0) [0|1] "" Décision,Dashboard
+
+BO_ 512 DEC_ALERT: 4 Décision
+ SG_ alert_level : 0|4@1+ (1,0) [0|15] "" Dashboard
+ SG_ ttc_s : 4|12@1+ (0.01,0) [0|40.95] "s" Dashboard
+ SG_ counter : 16|4@1+ (1,0) [0|15] "" Dashboard
+ SG_ crc : 24|8@1+ (1,0) [0|255] "" Dashboard
+
+BO_ 513 DEC_HB: 2 Décision
+ SG_ alive_ctr : 0|8@1+ (1,0) [0|255] "" Dashboard
+ SG_ state : 8|8@1+ (1,0) [0|255] "" Dashboard
+
+CM_ BO_ 256 "Objet perçu par l'ECU Perception (YOLOv8n + distance monoculaire)";
+CM_ BO_ 512 "Alerte émise par l'ECU Décision (avec protection E2E CRC8 + compteur)";
+CM_ BO_ 513 "Heartbeat de l'ECU Décision";
+
+CM_ SG_ 256 obj_id "Identifiant unique de l'objet détecté (0-255)";
+CM_ SG_ 256 dist_m "Distance relative à l'objet (facteur 0.01, donc 100 = 1.00 m)";
+CM_ SG_ 256 rel_speed_mps "Vitesse relative (facteur 0.01, offset -100)";
+CM_ SG_ 256 ttc_s "Time-To-Collision calculé (facteur 0.01)";
+CM_ SG_ 256 valid "1 si l'objet est valide, 0 sinon";
+
+CM_ SG_ 512 alert_level "0=OFF, 1=STANDBY, 2=WARNING, 3=BRAKE, 4=FAULT";
+CM_ SG_ 512 ttc_s "TTC courant (facteur 0.01)";
+CM_ SG_ 512 counter "Compteur E2E 4 bits (0-15, wrap)";
+CM_ SG_ 512 crc "CRC8 poly 0x1D sur les 3 premiers octets";
+
+CM_ SG_ 513 alive_ctr "Compteur vivant 8 bits (0-255, wrap)";
+CM_ SG_ 513 state "État courant FSM (mêmes valeurs que alert_level)";
+
+VAL_ 512 alert_level 0 "OFF" 1 "STANDBY" 2 "WARNING" 3 "BRAKE" 4 "FAULT";
+VAL_ 513 state 0 "OFF" 1 "STANDBY" 2 "WARNING" 3 "BRAKE" 4 "FAULT";
