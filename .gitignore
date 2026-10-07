@@ -1,0 +1,24 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+.pytest_cache/
+
+# C++
+build/
+*.o
+*.so
+*.a
+compile_commands.json
+
+# IDE
+.vscode/
+.idea/
+*.swp
+
+# Projet
+logs/
+*.log
+*.bag
