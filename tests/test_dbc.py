@@ -18,6 +18,10 @@ from __future__ import annotations
 import pytest
 
 
+# Table des labels FSM (définie dans le DBC via VAL_)
+FSM_LABELS = {0: "OFF", 1: "STANDBY", 2: "WARNING", 3: "BRAKE", 4: "FAULT"}
+
+
 # ===========================================================================
 # Tests de structure DBC
 # ===========================================================================
@@ -118,7 +122,6 @@ class TestPercObject:
         encoded = perc_object_msg.encode(valid_perc_data)
         decoded = perc_object_msg.decode(encoded)
 
-        # Comparaison avec tolérance sur les floats (facteur 0.01)
         assert decoded["obj_id"] == valid_perc_data["obj_id"]
         assert abs(decoded["dist_m"] - valid_perc_data["dist_m"]) < 0.01
         assert abs(decoded["rel_speed_mps"] - valid_perc_data["rel_speed_mps"]) < 0.01
@@ -167,21 +170,19 @@ class TestDecAlert:
             data = dec_alert_msg.encode({
                 "alert_level": 0, "ttc_s": 0.0, "counter": counter, "crc": 0,
             })
-            # Bits 4-7 du 2ème octet (position 16..19)
-            extracted = (data[2] >> 0) & 0x0F  # à ajuster selon DBC
-            # Vérification via decode (plus robuste)
             decoded = dec_alert_msg.decode(data)
             assert decoded["counter"] == counter
 
     @pytest.mark.decode
     def test_decode_alert_level(self, dec_alert_msg):
-        """L'alert_level doit être décodé correctement."""
+        """L'alert_level doit être décodé correctement (valeur OU label)."""
         for level in range(5):
             data = dec_alert_msg.encode({
                 "alert_level": level, "ttc_s": 0.0, "counter": 0, "crc": 0,
             })
             decoded = dec_alert_msg.decode(data)
-            assert decoded["alert_level"] == level
+            # cantools peut renvoyer la valeur numérique OU le label
+            assert decoded["alert_level"] in (level, FSM_LABELS[level])
 
     @pytest.mark.decode
     def test_decode_roundtrip(self, dec_alert_msg, valid_dec_alert_data):
@@ -189,7 +190,8 @@ class TestDecAlert:
         encoded = dec_alert_msg.encode(valid_dec_alert_data)
         decoded = dec_alert_msg.decode(encoded)
 
-        assert decoded["alert_level"] == valid_dec_alert_data["alert_level"]
+        expected_level = valid_dec_alert_data["alert_level"]
+        assert decoded["alert_level"] in (expected_level, FSM_LABELS[expected_level])
         assert abs(decoded["ttc_s"] - valid_dec_alert_data["ttc_s"]) < 0.01
         assert decoded["counter"] == valid_dec_alert_data["counter"]
         assert decoded["crc"] == valid_dec_alert_data["crc"]
@@ -226,8 +228,9 @@ class TestDecHb:
         encoded = dec_hb_msg.encode(valid_dec_hb_data)
         decoded = dec_hb_msg.decode(encoded)
 
+        expected_state = valid_dec_hb_data["state"]
         assert decoded["alive_ctr"] == valid_dec_hb_data["alive_ctr"]
-        assert decoded["state"] == valid_dec_hb_data["state"]
+        assert decoded["state"] in (expected_state, FSM_LABELS[expected_state])
 
 
 # ===========================================================================
