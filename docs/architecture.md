@@ -220,5 +220,21 @@ adas-can/
 | 0.1 | 2026-10-07 | Création initiale |
 
 
+### Précision de l'estimation de distance
+
+La méthode monoculaire par hauteur de bbox a une erreur type de ~15 %.
+Sources principales :
+- Incertitude sur la hauteur réelle de l'objet (± 20 %)
+- Précision de la bbox YOLO (± 5–10 px)
+- Inclinaison de l'objet (vue de biais)
+- Absence de correction de distorsion
+
+Améliorations possibles (hors scope Phase 2) :
+- Ground plane method (point de contact pneu/sol) → ~5 %
+- Lissage temporel (moyenne N frames) → réduction bruit
+- Vision stéréo → ~5 % (nécessite 2 caméras calibrées)
+- Modèles IA de profondeur (MiDaS) → ~10 % (lent sur CPU)
+
+
 
 
