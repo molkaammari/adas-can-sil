@@ -60,3 +60,18 @@ target_link_libraries(test_encoder
 gtest_discover_tests(test_encoder)
 
 
+
+# ---------------------------------------------------------------------------
+# Test FSM (machine à états)
+# ---------------------------------------------------------------------------
+
+add_executable(test_fsm test_fsm.cpp)
+target_link_libraries(test_fsm
+    PRIVATE
+        decision_core
+        GTest::gtest
+        GTest::gtest_main
+)
+gtest_discover_tests(test_fsm)
+
+
