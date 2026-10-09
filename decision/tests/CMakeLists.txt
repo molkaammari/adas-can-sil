@@ -75,3 +75,16 @@ target_link_libraries(test_fsm
 gtest_discover_tests(test_fsm)
 
 
+# ---------------------------------------------------------------------------
+# Test CAN (intégration SocketCAN — nécessite vcan0)
+# ---------------------------------------------------------------------------
+
+add_executable(test_can test_can.cpp)
+target_link_libraries(test_can
+    PRIVATE
+        decision_core
+        GTest::gtest
+        GTest::gtest_main
+)
+gtest_discover_tests(test_can)
+
