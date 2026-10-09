@@ -5,12 +5,19 @@
  * Références : REQ-CAN-001, REQ-DEC-006, REQ-DEC-007
  */
 
+
 #pragma once
 
+#include <array>
+#include <cstddef>
 #include <cstdint>
 #include <string>
 
 #include "decision/can_rx.hpp"  // pour CanFrame
+
+
+
+
 
 namespace adas {
 namespace decision {
