@@ -165,16 +165,19 @@ TEST(Fsm, FaultRecoveryOnValidFrame) {
     EXPECT_EQ(out.state, State::STANDBY);
 }
 
-TEST(Fsm, FaultAutoRecoveryAfterTimeout) {
+//TEST(Fsm, FaultAutoRecoveryAfterTimeout) {
+ TEST(Fsm, NoAutoRecoveryFromFault) {
     Fsm fsm;
-    (void)fsm.update(make_object(50.0, -5.0), 1.0);  // STANDBY
-    (void)fsm.update(make_object(50.0, -5.0, false), 1.1);  // FAULT at t=1.1
+    (void)fsm.update(make_object(50.0, -5.0), 1.0);           // STANDBY
+    (void)fsm.update(make_object(50.0, -5.0, false), 1.1);    // FAULT
     EXPECT_EQ(fsm.state(), State::FAULT);
 
-    // Tick après FAULT_RECOVERY_S → STANDBY auto
-    const auto out = fsm.tick(1.1 + FAULT_RECOVERY_S + 0.05);
-    EXPECT_EQ(out.state, State::STANDBY);
+    // Après un long tick, on reste en FAULT (pas d'auto-recovery)
+    const auto out = fsm.tick(5.0);
+    EXPECT_EQ(out.state, State::FAULT);
 }
+
+
 
 // ===========================================================================
 // Reset

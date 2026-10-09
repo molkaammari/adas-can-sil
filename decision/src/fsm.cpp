@@ -137,12 +137,21 @@ FsmOutput Fsm::tick(double timestamp_s) noexcept {
             }
         }
     }
+    
+    
+    
+    
 
     // Auto-recovery depuis FAULT après FAULT_RECOVERY_S
-    if (state_ == State::FAULT &&
-        (timestamp_s - last_state_change_s_) > FAULT_RECOVERY_S) {
-        transition_to(State::STANDBY, "auto_recovery", timestamp_s);
-    }
+   // if (state_ == State::FAULT &&
+    //    (timestamp_s - last_state_change_s_) > FAULT_RECOVERY_S) {
+    //    transition_to(State::STANDBY, "auto_recovery", timestamp_s);
+   // }
+    
+     // Pas d'auto-recovery : on reste en FAULT jusqu'à une nouvelle
+    // trame valide (voir Fsm::update()). C'est plus sûr en ADAS.
+    
+    
 
     out.state = state_;
     out.alert = state_to_alert(state_);
