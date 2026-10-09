@@ -46,3 +46,17 @@ target_link_libraries(test_decoder
 gtest_discover_tests(test_decoder)
 
 
+# ---------------------------------------------------------------------------
+# Test Encoder (DEC_ALERT, DEC_HB)
+# ---------------------------------------------------------------------------
+
+add_executable(test_encoder test_encoder.cpp)
+target_link_libraries(test_encoder
+    PRIVATE
+        decision_core
+        GTest::gtest
+        GTest::gtest_main
+)
+gtest_discover_tests(test_encoder)
+
+
