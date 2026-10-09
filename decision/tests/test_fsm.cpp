@@ -74,7 +74,7 @@ TEST(Fsm, OffGoesDirectlyToBrakeIfTtcCritical) {
 
 TEST(Fsm, StandbyToWarning) {
     Fsm fsm;
-    fsm.update(make_object(50.0, -5.0), 1.0);  // STANDBY
+    (void)fsm.update(make_object(50.0, -5.0), 1.0);  // STANDBY
     const auto out = fsm.update(make_object(3.0, -2.0), 1.1);  // TTC=1.5 → WARNING
     EXPECT_EQ(out.state, State::WARNING);
     EXPECT_TRUE(out.state_changed);
@@ -82,7 +82,7 @@ TEST(Fsm, StandbyToWarning) {
 
 TEST(Fsm, WarningToBrake) {
     Fsm fsm;
-    fsm.update(make_object(3.0, -2.0), 1.0);   // WARNING (TTC=1.5)
+    (void)fsm.update(make_object(3.0, -2.0), 1.0);   // WARNING (TTC=1.5)
     const auto out = fsm.update(make_object(2.0, -5.0), 1.1);  // TTC=0.4 → BRAKE
     EXPECT_EQ(out.state, State::BRAKE);
     EXPECT_TRUE(out.state_changed);
@@ -90,7 +90,7 @@ TEST(Fsm, WarningToBrake) {
 
 TEST(Fsm, WarningToStandby) {
     Fsm fsm;
-    fsm.update(make_object(3.0, -2.0), 1.0);   // WARNING
+    (void)fsm.update(make_object(3.0, -2.0), 1.0);   // WARNING
     // TTC = 30 / 5 = 6 s → safe (bien au-dessus de 2.0 + 0.5)
     const auto out = fsm.update(make_object(30.0, -5.0), 1.1);
     EXPECT_EQ(out.state, State::STANDBY);
@@ -103,7 +103,7 @@ TEST(Fsm, WarningToStandby) {
 
 TEST(Fsm, WarningStaysWhenTtcInDeadBand) {
     Fsm fsm;
-    fsm.update(make_object(3.0, -2.0), 1.0);   // WARNING (TTC=1.5)
+    (void)fsm.update(make_object(3.0, -2.0), 1.0);   // WARNING (TTC=1.5)
     // TTC = 2.4 / 1.0 = 2.4 s → dans la dead band (WARNING + 0.5 = 2.5)
     const auto out = fsm.update(make_object(2.4, -1.0), 1.1);
     EXPECT_EQ(out.state, State::WARNING);  // reste en WARNING
@@ -111,7 +111,7 @@ TEST(Fsm, WarningStaysWhenTtcInDeadBand) {
 
 TEST(Fsm, BrakeStaysWhenTtcInDeadBand) {
     Fsm fsm;
-    fsm.update(make_object(2.0, -5.0), 1.0);   // BRAKE (TTC=0.4)
+    (void)fsm.update(make_object(2.0, -5.0), 1.0);   // BRAKE (TTC=0.4)
     // TTC = 1.6 / 1.0 = 1.6 s → dans la dead band (BRAKE + 0.5 = 1.7)
     const auto out = fsm.update(make_object(1.6, -1.0), 1.1);
     EXPECT_EQ(out.state, State::BRAKE);  // reste en BRAKE
@@ -119,7 +119,7 @@ TEST(Fsm, BrakeStaysWhenTtcInDeadBand) {
 
 TEST(Fsm, BrakeCanExitToWarningAboveHysteresis) {
     Fsm fsm;
-    fsm.update(make_object(2.0, -5.0), 1.0);   // BRAKE
+    (void)fsm.update(make_object(2.0, -5.0), 1.0);   // BRAKE
     // TTC = 5 / 2 = 2.5 s → au-dessus de BRAKE+HYST = 1.7 → WARNING possible
     // Mais 2.5 > WARNING+HYST (2.5) aussi, donc on pourrait aller en STANDBY
     // Avec TTC=1.9 : > 1.7 (leave brake) et < 2.5 (stay warning)
@@ -133,7 +133,7 @@ TEST(Fsm, BrakeCanExitToWarningAboveHysteresis) {
 
 TEST(Fsm, InvalidObjectGoesToFault) {
     Fsm fsm;
-    fsm.update(make_object(50.0, -5.0), 1.0);  // STANDBY
+    (void)fsm.update(make_object(50.0, -5.0), 1.0);  // STANDBY
     const auto out = fsm.update(make_object(50.0, -5.0, /*valid=*/false), 1.1);
     EXPECT_EQ(out.state, State::FAULT);
     EXPECT_EQ(out.alert, AlertLevel::FAULT);
@@ -141,7 +141,7 @@ TEST(Fsm, InvalidObjectGoesToFault) {
 
 TEST(Fsm, TimeoutGoesToFault) {
     Fsm fsm;
-    fsm.update(make_object(50.0, -5.0), 1.0);  // STANDBY
+    (void)fsm.update(make_object(50.0, -5.0), 1.0);  // STANDBY
     // Tick après PERCEPTION_TIMEOUT_S + marge
     const auto out = fsm.tick(1.0 + PERCEPTION_TIMEOUT_S + 0.05);
     EXPECT_EQ(out.state, State::FAULT);
@@ -149,15 +149,15 @@ TEST(Fsm, TimeoutGoesToFault) {
 
 TEST(Fsm, TickBeforeTimeoutStaysInStandby) {
     Fsm fsm;
-    fsm.update(make_object(50.0, -5.0), 1.0);  // STANDBY
+    (void)fsm.update(make_object(50.0, -5.0), 1.0);  // STANDBY
     const auto out = fsm.tick(1.0 + PERCEPTION_TIMEOUT_S / 2.0);
     EXPECT_EQ(out.state, State::STANDBY);
 }
 
 TEST(Fsm, FaultRecoveryOnValidFrame) {
     Fsm fsm;
-    fsm.update(make_object(50.0, -5.0), 1.0);  // STANDBY
-    fsm.update(make_object(50.0, -5.0, false), 1.1);  // FAULT
+    (void)fsm.update(make_object(50.0, -5.0), 1.0);  // STANDBY
+    (void)fsm.update(make_object(50.0, -5.0, false), 1.1);  // FAULT
     EXPECT_EQ(fsm.state(), State::FAULT);
 
     // Nouvelle trame valide → retour en STANDBY (ou plus si TTC bas)
@@ -167,8 +167,8 @@ TEST(Fsm, FaultRecoveryOnValidFrame) {
 
 TEST(Fsm, FaultAutoRecoveryAfterTimeout) {
     Fsm fsm;
-    fsm.update(make_object(50.0, -5.0), 1.0);  // STANDBY
-    fsm.update(make_object(50.0, -5.0, false), 1.1);  // FAULT at t=1.1
+    (void)fsm.update(make_object(50.0, -5.0), 1.0);  // STANDBY
+    (void)fsm.update(make_object(50.0, -5.0, false), 1.1);  // FAULT at t=1.1
     EXPECT_EQ(fsm.state(), State::FAULT);
 
     // Tick après FAULT_RECOVERY_S → STANDBY auto
@@ -182,7 +182,7 @@ TEST(Fsm, FaultAutoRecoveryAfterTimeout) {
 
 TEST(Fsm, ResetGoesToOff) {
     Fsm fsm;
-    fsm.update(make_object(50.0, -5.0), 1.0);  // STANDBY
+    (void)fsm.update(make_object(50.0, -5.0), 1.0);  // STANDBY
     fsm.reset();
     EXPECT_EQ(fsm.state(), State::OFF);
 }
@@ -193,7 +193,7 @@ TEST(Fsm, ResetGoesToOff) {
 
 TEST(Fsm, NoStateChangeWhenAlreadyInCorrectState) {
     Fsm fsm;
-    fsm.update(make_object(3.0, -2.0), 1.0);  // WARNING
+    (void)fsm.update(make_object(3.0, -2.0), 1.0);  // WARNING
     const auto out = fsm.update(make_object(3.0, -2.0), 1.1);  // toujours WARNING
     EXPECT_EQ(out.state, State::WARNING);
     EXPECT_FALSE(out.state_changed);
