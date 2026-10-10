@@ -24,3 +24,14 @@ logs/
 *.bag
 runs/
 docs/pdf/
+
+# Fichiers personnels (gardés en local, non publiés)
+docs/recap_general.pdf
+docs/recap_general.md
+docs/dossier_technique.md
+docs/dossier_technique.pdf
+Post LinkedIn*
+pitch.md
+pitch.pdf
+linkedin_post.md
+linkedin_post.pdf
